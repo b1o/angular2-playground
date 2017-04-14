@@ -1,0 +1,24 @@
+<mdl-card mdl-shadow="2" style="width:100%">
+  <mdl-card-title>
+    <h2 *ngIf="!isEditingTitle" (click)="editTitle()">{{question.name}}</h2>
+    <mdl-textfield *ngIf="isEditingTitle"autofocus [(ngModel)]="question.name" type="text" value="{{question.name}}" (keypress)="doneEditTitle($event)" (blur)="isEditingTitle = false"></mdl-textfield>
+    <button mdl-button mdl-button-type="raised" mdl-colored="accent" mdl-ripple (click)="addAnswer()">Add answer</button>
+  </mdl-card-title> 
+  <mdl-card-supporting-text>
+    <div class="answers">
+      <mdl-radio 
+      (change)="markAsRight(answer)"
+      style="display: block" 
+      *ngFor="let answer of question.answers; let i = index" 
+      name="group-{{question.name}}" 
+      value="{{i}}" 
+      [(ngModel)]="radioOption" 
+      [class.isRight]="answer.isRight"
+      
+      mdl-ripple>
+        <span *ngIf="!answer.isEditing" (click)="editAnswer(answer)">{{answer.name}}</span>
+        <mdl-textfield *ngIf="answer.isEditing" autofocus (keypress)="keyPressed($event)" (blur)="doneEditing($event)" [(ngModel)]="answer.name" value="{{answer.name}}" type="text"></mdl-textfield>
+      </mdl-radio>
+    </div>
+  </mdl-card-supporting-text>
+</mdl-card>

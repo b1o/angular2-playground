@@ -1,0 +1,86 @@
+<style>
+  .photoset-row {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .post {
+    margin-bottom: 10px;
+    box-shadow: 0px 0px 15px black;
+    border: none;
+    transition: all .5s;
+    width: 100%;
+    border: none;
+    z-index:0;
+  }
+  
+  .post:hover .mdl-card__media{
+      transform: scale(1.1);
+      z-index:1;
+  }
+
+  .post-image img {
+    width: 100%;
+  }
+  
+  .photoset-row-1 img {
+    width: 100%;
+    margin: 0;
+  }
+  
+  .photoset-row-3 img {
+    width: 33.33%;
+  }
+  
+  .photoset-row-2 img {
+    width: 50%;
+  }
+
+  .tags {
+      opacity: 0;
+      transition: all .5s ease;
+      position: absolute;
+      bottom:50px;
+      background: rgba(0,0,0,0.5);
+      margin:5px;
+      word-break: break-all;
+  }
+
+  .post  * {
+    transition: all .5s;
+  }
+
+  .post:hover .tags {
+      opacity:1;
+      bottom:0;
+  }
+  .tag::before {
+      content: '#'
+  }
+  
+  .mdl-card__media {
+    width: 100%;
+  }
+
+  .post-image {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+</style>
+
+<mdl-card *ngIf="post" class="post post-{{post.type}}">
+  <mdl-card-media *ngIf="!post.photoset_layout">
+    <img src="{{photo}}" alt="broken" class="post-image">
+  </mdl-card-media>
+  
+</mdl-card>
+<!--
+<div class="photoset" *ngIf="post.photoset_layout">
+    <div class="photoset_row photoset-row-{{row.length}}" *ngFor="let row of photos">
+      <img *ngFor="let photo of row" class="photoset-img" src="{{photo.original_size.url}}" alt="broken">
+    </div>
+  </div>
+    <div class="btn-group tags" *ngIf="post.tags">
+        <button (click)="tagClicked(tag)" class="btn btn-sm btn-primary tag" *ngFor="let tag of post.tags">{{tag}}</button>
+    </div>-->

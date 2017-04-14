@@ -1,0 +1,14 @@
+<mdl-card mdl-shadow="3">
+    <mdl-card-media>
+      <img *ngIf="avatar" class="card-img-top" src="{{avatar}}" alt="Card image cap">
+    </mdl-card-media>
+    <mdl-card-title>
+        <a routerLink="/"><h2 mdl-card-title-text>{{user.title}}</h2></a>
+    </mdl-card-title>
+    <mdl-card-supporting-text>
+        <h6>{{user.description}}</h6>
+        <h6>
+            {{subTitle}}
+        </h6>
+    </mdl-card-supporting-text>
+</mdl-card>

@@ -1,10 +1,22 @@
-import { Component } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewEncapsulation
+} from '@angular/core';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  selector: 'app',
+  styleUrls: [
+    './app.component.css'
+  ],
+  template: `
+    <router-outlet></router-outlet>
+  `
 })
-export class AppComponent {
-  title = 'app works!';
+export class AppComponent implements OnInit {
+
+  public ngOnInit() {
+    console.log('Init app');
+  }
+
 }

@@ -1,0 +1,14 @@
+<div mdl-shadow="2">
+   <mdl-layout mdl-layout-fixed-drawer>
+      <mdl-layout-drawer style="width:25%; justify-content: center; align-items: center;">
+         <user-card [subTitle]="subTitle" [user]='blogInfo' class=""></user-card>
+      </mdl-layout-drawer>
+      <mdl-layout-content style="margin-left:25%" (scroll)="onScroll($event)">
+         <div id="posts" *ngIf="posts" class="" style="padding: 50px;" >
+            <div *ngFor="let post of posts">
+                <post *ngIf="post.type == 'photo'" [post]="post"></post>
+            </div>
+        </div>
+      </mdl-layout-content>
+   </mdl-layout>
+</div>

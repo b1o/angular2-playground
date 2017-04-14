@@ -1,0 +1,38 @@
+<div class="tests-container" mdl-shadow="2">
+  <mdl-layout mdl-layout-fixed-header mdl-layout-header-seamed>
+    <mdl-layout-header>
+      <mdl-layout-header-row>
+        <mdl-layout-title>Title</mdl-layout-title>
+        <mdl-layout-spacer></mdl-layout-spacer>
+        <!-- Navigation. We hide it in small screens. -->
+        <nav class="mdl-navigation mdl-layout--large-screen-only">
+          <a class="mdl-navigation__link">Link</a>
+          <a class="mdl-navigation__link">Link</a>
+          <a class="mdl-navigation__link">Link</a>
+        </nav>
+      </mdl-layout-header-row>
+    </mdl-layout-header>
+    <mdl-layout-drawer>
+      <mdl-layout-title>Title</mdl-layout-title>
+      <nav class="mdl-navigation">
+        <a class="mdl-navigation__link">Link</a>
+        <a class="mdl-navigation__link">Link</a>
+        <a class="mdl-navigation__link">Link</a>
+      </nav>
+    </mdl-layout-drawer>
+    <mdl-layout-content>
+
+      <div class="mdl-grid">
+        <mdl-layout-spacer></mdl-layout-spacer>
+        <button mdl-button mdl-button-type="raised" mdl-colored="accent" mdl-ripple (click)="addQuestion()">Add question</button>
+        <button mdl-button mdl-button-type="raised" mdl-colored="accent" mdl-ripple (click)="exportTest()">Export</button>
+        <mdl-layout-spacer></mdl-layout-spacer>
+      </div>
+
+      <div *ngIf="questions" mdl-shadow="16" class="question mdl-grid">
+        <question *ngFor="let q of questions" [question]="q" class="mdl-cell mdl-cell--12-col"></question>
+      </div>
+
+    </mdl-layout-content>
+  </mdl-layout>
+</div>
