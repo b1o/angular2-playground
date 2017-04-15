@@ -31,7 +31,7 @@ export class HomeComponent implements OnInit {
   private postOffset = 10;
   private tagView = false;
   private tagName;
-  private subTitle;
+  public subTitle;
   private sub;
   constructor(
     private tumblrApi: TumblrApi,

@@ -21,9 +21,9 @@ export class AudioComponent implements AfterViewInit {
     public fullscreen = true;
     public file;
     private canvasContext: CanvasRenderingContext2D;;
-    private audio: HTMLAudioElement;
+    public audio: HTMLAudioElement;
     private audioContext: AudioContext = new AudioContext();
-    private analyzer: AnalyserNode = this.audioContext.createAnalyser();
+    public analyzer: AnalyserNode = this.audioContext.createAnalyser();
     private dataArray: Uint8Array = new Uint8Array(this.bufferLength);
     private WIDTH;
     private HEIGHT;

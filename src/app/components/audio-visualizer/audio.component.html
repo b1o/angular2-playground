@@ -43,7 +43,6 @@
     </div>
 
     <div style="width: 500px;">
-      Smoothing: {{smoothness}}
       <mdl-slider #slider [min]="0" [max]="1" [step]="0.01" [(ngModel)]="analyzer.smoothingTimeConstant" (onchange)="getSliderStep()"></mdl-slider>
     </div>
   </div>

@@ -34,6 +34,10 @@ class DebugSystem {
     }
 }
 
+module speed {
+    export let speed = 0;
+}
+
 class Drawer {
     public elements = [];
     public requestAnimId;
@@ -42,10 +46,11 @@ class Drawer {
     private height;
     private source;
     private audio: HTMLAudioElement;
-    private bufferLength = 128;
+    private bufferLength = 64;
     private audioContext: AudioContext = new AudioContext();
     private analyzer: AnalyserNode = this.audioContext.createAnalyser();
     private dataArray: Uint8Array = new Uint8Array(this.bufferLength);
+    private framefinished = true;
 
     constructor(context: CanvasRenderingContext2D, width, height) {
         this.context = context;
@@ -65,6 +70,7 @@ class Drawer {
         this.audio.addEventListener('loadedmetadata', (data) => {
             console.log(data)
         });
+        console.log(this.analyzer)
         this.audio.play()
     }
 
@@ -78,27 +84,35 @@ class Drawer {
 
     public draw() {
         //this.requestAnimId = requestAnimationFrame(this.draw.bind(this))
-        requestAnimationFrame(this.draw.bind(this))
-        this.analyzer.getByteFrequencyData(this.dataArray);
-        let avgSpeed = 0;
-        for (let i = 0; i < this.bufferLength; i++) {
-            this.context.fillStyle = 'black'
-            this.context.fillRect(0, 0, this.width, this.height);
-            avgSpeed += this.dataArray[i];
-            for (let element of this.elements) {
-                if (element.type && element.type == 'particle') {
-                    if (!element.visible || ((element.position.x > this.width || element.position.x < 0) && (element.position.y > this.height || element.position.y < 0))) {
-                        this.elements.splice(this.elements.indexOf(element), 1)
-                    }
-                }
-                element.speed = (this.dataArray[i] / 128);
-                element.draw(this.context)
+        //requestAnimationFrame(this.draw.bind(this))
+        if (this.framefinished) {
+            if (this.analyzer) {
+                this.analyzer.getByteFrequencyData(this.dataArray);
 
             }
+            let avgSpeed = 0;
 
+            for (let i = 0; i < this.bufferLength; i++) {
+                this.context.fillStyle = 'black'
+                this.context.fillRect(0, 0, this.width, this.height);
+                this.context.font = "15px Arial";
+                this.context.fillStyle = 'red'
+                this.context.fillText(`particles: ${this.elements.length}`, 100, 100)
+                avgSpeed += this.dataArray[i];
+                for (let element of this.elements) {
+                    if (element.type && element.type == 'particle') {
+                        if (!element.visible || ((element.position.x > this.width || element.position.x < 0) || (element.position.y > this.height || element.position.y < 0))) {
+                            this.elements.splice(this.elements.indexOf(element), 1)
+                        }
+                    }
+                    speed.speed = (this.dataArray[i] / 128);
+                    element.draw(this.context)
+                }
+                this.framefinished = false;
+
+            }
+            this.framefinished = true;
         }
-
-
     }
 }
 
@@ -118,7 +132,6 @@ export class ParticlesComponent implements OnInit {
 
 
     constructor() {
-
     }
 
     public mouseMove(event) {
@@ -145,10 +158,12 @@ export class ParticlesComponent implements OnInit {
         this.generator.starter = new Point2D(this.cWidth / 2, this.cHeight / 2)
 
         setInterval(() => {
-            this.generator.generateParticles(10);
+            this.generator.generateParticles(4);
             //    this.generator.generateParticles(1);
-        }, 200)
-        this.drawer.draw()
+        }, 90)
+
+        setInterval(this.drawer.draw.bind(this.drawer), 10)
+        // this.drawer.draw()
     }
 }
 
@@ -220,7 +235,7 @@ class Particle {
     public radius;
     center;
     visible = true;
-    speed = Math.random();
+    speed = 0;
     direction;
     directions = [1, 0, -1];
     lifeEnd = new EventEmitter();
@@ -240,8 +255,8 @@ class Particle {
     }
 
     public draw(context) {
-        this.position.x += this.speed * this.direction.x;
-        this.position.y += this.speed * this.direction.y;
+        this.position.x += speed.speed * this.direction.x;
+        this.position.y += speed.speed * this.direction.y;
         if (this.radius <= 10) {
             this.radius += 0.005;
         } else {
