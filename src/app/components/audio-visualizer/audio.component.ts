@@ -113,6 +113,7 @@ export class AudioComponent implements AfterViewInit {
             return;
         }
         this.audio = new Audio();
+        this.audio.src = "assets/music.mp3"
         this.source = this.audioContext.createMediaElementSource(this.audio);
         this.source.connect(this.analyzer);
         this.analyzer.connect(this.audioContext.destination);

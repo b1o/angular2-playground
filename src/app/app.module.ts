@@ -1,3 +1,4 @@
+import { EnviromentService } from './components/particles/enviroment.service';
 import { ParticlesComponent } from './components/particles/particles.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
@@ -47,7 +48,8 @@ import 'jquery';
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
     TumblrApi,
-    EmitterService
+    EmitterService,
+    EnviromentService
   ],
 })
 export class AppModule {
