@@ -38,11 +38,6 @@ class DebugSystem {
 module speed {
     export let delta;
     export let speed = 0;
-    export let onChange = new EventEmitter();
-    export function change(amount) {
-        onChange.emit(amount);
-
-    }
 }
 
 class Drawer {
@@ -52,8 +47,8 @@ class Drawer {
     private width;
     private height;
     private source;
-    private audio: HTMLAudioElement;
-    private bufferLength = 32;
+    public audio: HTMLAudioElement;
+    private bufferLength = 128;
     private audioContext: AudioContext = new AudioContext();
     private analyzer: AnalyserNode = this.audioContext.createAnalyser();
     private dataArray: Uint8Array = new Uint8Array(this.bufferLength);
@@ -76,10 +71,12 @@ class Drawer {
         this.audio.volume = 0.2;
         this.source = this.audioContext.createMediaElementSource(this.audio);
         this.source.connect(this.analyzer);
-        this.analyzer.smoothingTimeConstant = 0.9;
+        this.analyzer.smoothingTimeConstant = 0.3;
         this.analyzer.connect(this.audioContext.destination);
         this.analyzer.fftSize = this.bufferLength;
         this.analyzer.smoothingTimeConstant = 0.5;
+        this.bufferLength = this.analyzer.frequencyBinCount;
+        this.dataArray = new Uint8Array(this.bufferLength);
         this.audio.addEventListener('loadedmetadata', (data) => {
             console.log(data)
         });
@@ -95,46 +92,66 @@ class Drawer {
         )[0]
     }
 
+    public pause() {
+        this.audio.pause();
+    }
+
+    public play() {
+        this.audio.play();
+    }
+
     public analyzeAudio() {
         this.analyzer.getByteFrequencyData(this.dataArray);
 
     }
 
+
+//        (b-a)(x - min)
+// f(x) = --------------  + a
+//           max - min
+
+    public scale(valueIn, baseMin, baseMax, limitMin, limitMax) {
+        return ((limitMax - limitMin) * (valueIn - baseMin) / (baseMax - baseMin)) + limitMin;
+    }
+
     public draw() {
         //this.requestAnimId = requestAnimationFrame(this.draw.bind(this))
         //requestAnimationFrame(this.draw.bind(this))
-        // if (this.framefinished) {
-        let delta = (Date.now() - this.lastCalledTime) / 1000;
-        speed.delta = delta;
-        this.lastCalledTime = Date.now();
-        this.fps = 1 / delta;
+        if (this.framefinished) {
+            let delta = (Date.now() - this.lastCalledTime) / 1000;
+            speed.delta = delta;
+            this.lastCalledTime = Date.now();
+            this.fps = 1 / delta;
 
-        this.context.fillStyle = 'black'
-        this.context.fillRect(0, 0, this.width, this.height);
-        this.context.font = "15px Arial";
-        this.context.fillStyle = 'red'
+            this.context.fillStyle = 'black'
+            this.context.fillRect(0, 0, this.width, this.height);
+            this.context.font = "15px Arial";
+            this.context.fillStyle = 'red'
 
-        this.analyzeAudio()
-        let avrgSpeed = 0;
-        this.dataArray.forEach(x => avrgSpeed += x / 128)
-        this.context.fillText(`particles: ${this.elements.length}; fps ${Math.floor(this.fps)}, avgSpeed: ${avrgSpeed.toFixed(2)}`, 100, 100)
+            this.analyzeAudio()
+            let avrgSpeed = 0;
+            this.dataArray.forEach(x => avrgSpeed += x / 128)
 
-        //  for (let i = 0; i < this.bufferLength / 2; i++) {
-        for (let element of this.elements) {
-            if (element.type && element.type == 'particle') {
-                if (!element.visible || ((element.position.x > this.width || element.position.x < 0) || (element.position.y > this.height || element.position.y < 0))) {
-                    this.elements.splice(this.elements.indexOf(element), 1)
+            this.context.fillText(`particles: ${this.elements.length}; fps ${Math.floor(this.fps)}, avgSpeed: ${ this.scale(this.dataArray[0], 1, 128, 1, 5)}`, 100, 100)
+
+            //  for (let i = 0; i < this.bufferLength / 2; i++) {
+            for (let element of this.elements) {
+                if (element.type && element.type == 'particle') {
+                    if (!element.visible || ((element.position.x > this.width || element.position.x < 0) || (element.position.y > this.height || element.position.y < 0))) {
+                        this.elements.splice(this.elements.indexOf(element), 1)
+                    }
                 }
+
+                //element.audioSpeed = prop * avrgSpeed ;
+                element.audioSpeed = this.scale(this.dataArray[0], 1, 128, 0, 5);
+                element.draw(this.context)
+
             }
 
-            element.speed = ((avrgSpeed - 5));
-            element.draw(this.context)
+            this.framefinished = false;
+
+            // }
         }
-
-        this.framefinished = false;
-
-        // }
-        //}
         this.framefinished = true;
     }
 }
@@ -153,6 +170,10 @@ export class ParticlesComponent implements OnInit {
     public debugSystem;
     private drawer: Drawer;
 
+    private drawerInterval;
+    private generatorInterval;
+    private isPlaying = true;
+
 
     constructor(private enviromentService: EnviromentService) {
     }
@@ -160,6 +181,16 @@ export class ParticlesComponent implements OnInit {
     public mouseMove(event) {
         //this.generator.starter = new Point2D(event.pageX, event.pageY)
         this.debugSystem.showMouseCoords(event)
+    }
+
+    public gotFile(file) {
+        console.log(file)
+        let url = URL.createObjectURL(file);
+        this.drawer.audio.src = url;
+        this.drawer.audio.addEventListener('loadedmetadata', (data) => {
+            console.log(url)
+            this.drawer.audio.play()
+        })
     }
 
     ngOnInit() {
@@ -175,39 +206,76 @@ export class ParticlesComponent implements OnInit {
             this.debugSystem = new DebugSystem(this.canvas.nativeElement, this.drawer);
         }
 
+        window.addEventListener('mousewheel', (e) => {
+            e.preventDefault()
+            if (e.wheelDelta > 0) {
+                if (this.drawer.audio.volume + 0.1 < 1)
+                    this.drawer.audio.volume += 0.1;
+            } else {
+                if (this.drawer.audio.volume - 0.1 > 0) {
+                    this.drawer.audio.volume -= 0.1;
+
+                }
+
+
+            }
+            console.log(this.drawer.audio.volume)
+
+        })
+
         window.addEventListener('keydown', (event) => {
             console.log(event)
             // 68 - d
             // 65 - a
             // 83 - s;
             // 87 - w;
-           if(event.keyCode == 68) {
-               this.generator.starter.x += 250 * speed.delta
-           }
+            if (event.keyCode == 68) {
+                this.generator.starter.x += 250 * speed.delta
+            }
 
-           if(event.keyCode == 65) {
-               this.generator.starter.x -= 250 * speed.delta
-           }
+            if (event.keyCode == 65) {
+                this.generator.starter.x -= 250 * speed.delta
+            }
 
-           if(event.keyCode == 83) {
-               this.generator.starter.y += 250 * speed.delta
-           }
+            if (event.keyCode == 83) {
+                this.generator.starter.y += 250 * speed.delta
+            }
 
-           if(event.keyCode == 87) {
-               this.generator.starter.y -= 250 * speed.delta
-           }
+            if (event.keyCode == 87) {
+                this.generator.starter.y -= 250 * speed.delta
+            }
 
+            if (event.code == "Space") {
+                if (this.isPlaying) {
+                    this.drawer.pause()
+                    clearInterval(this.drawerInterval)
+                    clearInterval(this.generatorInterval)
+                    this.isPlaying = false;
+                } else {
+                    this.drawer.play()
+                    this.generatorInterval = setInterval(() => {
+                        this.generator.generateParticles(20);
+                    }, 50)
+
+                    this.drawerInterval = setInterval(() => {
+
+                        this.drawer.draw();
+                    }, 16)
+                    this.isPlaying = true;
+
+                }
+            }
         })
 
 
         this.generator = new ParticleGenerator(this.drawer, this.cWidth, this.cHeight);
         this.generator.starter = new Point2D(this.cWidth / 2, this.cHeight / 2)
 
-        setInterval(() => {
+        this.generatorInterval = setInterval(() => {
             this.generator.generateParticles(20);
         }, 50)
 
-        setInterval(() => {
+        this.drawerInterval = setInterval(() => {
 
             this.drawer.draw();
         }, 16)
@@ -281,9 +349,10 @@ class Particle {
     public color;
     public id;
     public radius;
+    audioSpeed = 0;
     center;
     visible = true;
-    speed = 0.5;
+    speed = 1;
     direction;
     directions = [1, 0, -1];
     lifeEnd = new EventEmitter();
@@ -300,17 +369,11 @@ class Particle {
         this.b = Math.floor(Math.random() * 255) + 1;
         this.center = new Point2D(position.x, position.y)
         this.direction = new Point2D((Math.random() * 2) - 1, (Math.random() * 2) - 1);
-        speed.onChange.subscribe(
-            (data) => {
-                console.log(data)
-                this.speed = data;
-            }
-        )
     }
 
     public draw(context) {
-        this.position.x += this.speed * this.direction.x;
-        this.position.y += this.speed * this.direction.y;
+        this.position.x += ((this.audioSpeed + this.speed) * this.direction.x);
+        this.position.y += (this.audioSpeed + this.speed) * this.direction.y;
         if (this.radius <= 15) {
             this.radius += 2 * speed.delta;
         } else {

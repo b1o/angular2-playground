@@ -1,1 +1,12 @@
+<style>
+    #file {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        background: rgba(255,255,255,0.5);
+    }
+</style>
+
+
 <canvas #canvas (mousemove)="mouseMove($event)"></canvas>
+<input id='file' type="file" #audio (change)="gotFile($event.target.files[0])">
