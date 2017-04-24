@@ -1,3 +1,4 @@
+import { TParticlesComponent } from './components/threejs-particles/Tparticles.component';
 import { ParticlesComponent } from './components/particles/particles.component';
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home.component';
@@ -13,6 +14,7 @@ export const ROUTES: Routes = [
   },
   { path: 'test', component: TestComponent },
   { path: 'music', component: AudioComponent },
-  { path: 'particles', component: ParticlesComponent }
+  { path: 'particles', component: ParticlesComponent },
+  {path: 'threejs', component: TParticlesComponent}
   
 ];

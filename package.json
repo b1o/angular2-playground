@@ -9,7 +9,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "gh-deploy" : "ng build --prod --base-href https://b1o.github.io/angular2-playground/ & ngh"
+    "gh-deploy": "ng build --prod --base-href https://b1o.github.io/angular2-playground/ & ngh"
   },
   "private": true,
   "dependencies": {
@@ -22,10 +22,15 @@
     "@angular/platform-browser": "^4.0.0",
     "@angular/platform-browser-dynamic": "^4.0.0",
     "@angular/router": "^4.0.0",
+    "@types/tween.js": "0.0.31",
+    "@types/tweenjs": "^0.6.27",
     "angular2-mdl": "^2.13.2",
     "core-js": "^2.4.1",
     "jquery": "^3.2.1",
     "rxjs": "^5.1.0",
+    "three": "^0.85.0",
+    "three-orbit-controls": "^82.1.0",
+    "tween.js": "^16.6.0",
     "zone.js": "^0.8.4"
   },
   "devDependencies": {

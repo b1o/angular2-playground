@@ -1,3 +1,4 @@
+import { TParticlesComponent } from './components/threejs-particles/Tparticles.component';
 import { EnviromentService } from './components/particles/enviroment.service';
 import { ParticlesComponent } from './components/particles/particles.component';
 import { BrowserModule } from '@angular/platform-browser';
@@ -36,7 +37,8 @@ import 'jquery';
     TestComponent,
     QuestionComponent,
     AudioComponent,
-    ParticlesComponent
+    ParticlesComponent,
+    TParticlesComponent
   ],
   imports: [ // import Angular's modules
     BrowserModule,
