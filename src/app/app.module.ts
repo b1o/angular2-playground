@@ -1,3 +1,4 @@
+import { WolframComponent } from './components/wolfram-alpha/wa.component';
 import { TParticlesComponent } from './components/threejs-particles/Tparticles.component';
 import { EnviromentService } from './components/particles/enviroment.service';
 import { ParticlesComponent } from './components/particles/particles.component';
@@ -38,7 +39,8 @@ import 'jquery';
     QuestionComponent,
     AudioComponent,
     ParticlesComponent,
-    TParticlesComponent
+    TParticlesComponent,
+    WolframComponent
   ],
   imports: [ // import Angular's modules
     BrowserModule,

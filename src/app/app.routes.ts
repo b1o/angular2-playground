@@ -1,3 +1,4 @@
+import { WolframComponent } from './components/wolfram-alpha/wa.component';
 import { TParticlesComponent } from './components/threejs-particles/Tparticles.component';
 import { ParticlesComponent } from './components/particles/particles.component';
 import { Routes } from '@angular/router';
@@ -15,6 +16,7 @@ export const ROUTES: Routes = [
   { path: 'test', component: TestComponent },
   { path: 'music', component: AudioComponent },
   { path: 'particles', component: ParticlesComponent },
-  {path: 'threejs', component: TParticlesComponent}
+  {path: 'threejs', component: TParticlesComponent},
+  {path: 'wa', component:WolframComponent}
   
 ];

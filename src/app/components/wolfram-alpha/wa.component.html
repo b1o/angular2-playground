@@ -1,0 +1,15 @@
+<div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--12-col">
+        <mdl-textfield floating-label label='query' [(ngModel)]="query" ></mdl-textfield>
+        <button mdl-button mdl-ripple mdl-button-type="raised" mdl-colored="accent" (click)="sendQuery(query)">Send</button>
+    </div>
+
+    <div *ngIf="pods" class="mdl-cell mdl-cell--12-col">
+        <mdl-card mdl-shadow="2" *ngFor="let pod of pods" style="width:100%; margin-bottom:5px;">
+            <mdl-card-title>
+                <h2 mdl-card-title-text>{{pod.title}}</h2>
+            </mdl-card-title>
+        </mdl-card>
+    </div>
+</div>
+

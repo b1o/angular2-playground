@@ -12,7 +12,7 @@
     }
 
     .file {
-        position: absolute;
+        position: fixed;
         width: 100%;
         bottom: 0;
         z-index: 1;
@@ -39,6 +39,7 @@
 <div class="file">
     <div class="wrapper">
         <input type="file" (change)="fileChanged($event.target.files[0])">
+        <span><button mdl-button mdl-button-type="raised" (click)="pause()">Pause</button></span>
         <p class="filename">Now Playing: {{audioName}}</p>
         <div class="duration" [style.width]='progress + "%"'></div>
     </div>
