@@ -23,7 +23,7 @@ export class WolframComponent implements OnInit {
         return result;
     }
 
-    private sendQuery(query: string) {
+    public sendQuery(query: string) {
         $.get({
             url: this.makeUrl(query),
             dataType: 'image/gif',

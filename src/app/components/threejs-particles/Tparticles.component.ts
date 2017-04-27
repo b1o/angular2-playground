@@ -90,8 +90,8 @@ export class TParticlesComponent implements AfterViewInit {
         document.body.appendChild(this.renderer.domElement)
 
 
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.camera.position.z = 1000
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+        this.camera.position.z = 1100
         this.camera.position.x = 0;
         this.camera.position.y = 0;
 
@@ -131,13 +131,13 @@ export class TParticlesComponent implements AfterViewInit {
                 if (!e['direction']) {
                     e['direction'] = new THREE.Vector3(e.position.x, e.position.y, e.position.z).normalize()
                     e['life'] = this.randomIntFromInterval(10, 30);
-                    e['speed'] = 20;
+                    e['speed'] = 15;
                 }
                 //e.rotation.x = this.dataArray[50] / 1000;
                 //e.rotation.y = this.dataArray[e.id] / 50;
-                e.position.x += ((e['speed'] * this.dataArray[e.name] / 128) + 1) * e['direction'].x
-                e.position.y += ((e['speed'] * this.dataArray[e.name] / 128) + 1) * e['direction'].y
-                e.position.z += ((e['speed'] * this.dataArray[e.name] / 128) + 1) * e['direction'].z
+                e.position.x += ((e['speed'] * this.dataArray[e.name] / 128) - 1) * e['direction'].x
+                e.position.y += ((e['speed'] * this.dataArray[e.name] / 128) - 1) * e['direction'].y
+                e.position.z += ((e['speed'] * this.dataArray[e.name] / 128) - 1) * e['direction'].z
                 e['life'] -= 0.05;
                 if (e['life'] <= 0) {
                     e.position.x = 0// this.randomIntFromInterval(-100, 100);
@@ -148,7 +148,7 @@ export class TParticlesComponent implements AfterViewInit {
                 }
 
 
-                this.pivot.position.z = this.dataArray[50];
+                //this.pivot.position.z = this.dataArray[50];
 
                 //e.scale.multiplyScalar((this.dataArray[e.id] / 255) + 0.1)
                 let material: any = e.material
@@ -156,12 +156,13 @@ export class TParticlesComponent implements AfterViewInit {
                 //material.opacity = this.dataArray[e.name] / 1
                 // percent = (inputY - yMin) / (yMax - yMin);
                 // outputX = percent * (xMax - xMin) + xMin;
-                let percent = 255 / 80
+                this.pivot.rotation.z +=(( this.dataArray[e.id] / 128 )-1 ) * this.clock.getDelta();
+
+                let percent = 255 / 95
                 material.color.setRGB(percent * this.dataArray[e.name], 255 - (percent * this.dataArray[e.name]), 0)
                 e.material.needsUpdate = true;
             }
         }
-        this.pivot.rotation.z += 2 * this.clock.getDelta();
         // this.light.position.copy(this.camera.position)
         // this.light.lookAt(this.pivot.position)
         this.renderer.render(this.scene, this.camera)
